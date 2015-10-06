@@ -1,3 +1,3 @@
 #!/bin/bash
 rm -rf out/
-jsdoc -r pieces errors lib.js -c jsdoc/conf.json
+jsdoc -c jsdoc/conf.json

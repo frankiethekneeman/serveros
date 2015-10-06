@@ -9,8 +9,8 @@ var fs = require('fs')
             callback({
                 'id': id
                 , publicKey: publicKeys[id]
-                , hashes: ['sha256', 'sha512']
-                , ciphers: ['aes256', 'aes192']
+                , hashes: ['sha1', 'sha256', 'sha512']
+                , ciphers: ['aes128', 'aes256', 'aes192']
                 , keysLast: 3600000
                 , authData: ["Perm1", "Perm2"]
             });
@@ -23,8 +23,8 @@ var express = require('express')
     , master = new ServerosMaster({
         privateKey: myPrivateKey
         , publicKeyFunction: keyFunction
-        , hashes: ['sha256', 'sha512']
-        , ciphers: ['aes256', 'aes192']
+        , hashes: ['sha1', 'sha256', 'sha512']
+        , ciphers: ['aes128', 'aes256', 'aes192']
     })
     , application = express()
 master.addAuthenticationEndpoint(application);

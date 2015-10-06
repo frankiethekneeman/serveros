@@ -21,6 +21,8 @@ consumer.getCredentials('Application B', 'http://localhost:3501/authenticate', f
         console.log('Error Getting Credentials:');
         console.log(err.prepResponseBody && err.prepResponseBody() || err);
         console.log(err.stack);
+        console.log(err.err);
+        console.log(err.err.stack);
         return;
     } else {
         console.log('The Consumer now has Credentials:');
@@ -44,6 +46,7 @@ consumer.getCredentials('Application B', 'http://localhost:3501/authenticate', f
         }
         else {
             console.log("Hawk Request complete");
+            console.log(resp.statusCode);
             console.log(body);
         }
     });

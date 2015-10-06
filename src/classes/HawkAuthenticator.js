@@ -67,7 +67,7 @@ HawkAuthenticator.prototype = {
     credentialsAccepter: function() {
         var that = this;
         return function(credentials) {
-            that.storage.store(credentials.key, credentials);
+            that.storage.store(credentials.id, credentials);
         };
     }, 
     /**
@@ -80,8 +80,10 @@ HawkAuthenticator.prototype = {
         return function(req, res, next) {
             Hawk.server.authenticate(req, function(id, callback) {
                 that.storage.retrieve(id, function(credentials) {
-                    if (!credentials)
-                        callback("No Credentials Found.");
+                    if (!credentials) {
+                      callback("No Credentials Found.");
+                      return;
+                    }
                     var hawkCredentials = {
                         key: credentials.secret
                         , algorithm: credentials.hash
