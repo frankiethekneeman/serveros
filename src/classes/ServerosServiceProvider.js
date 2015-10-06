@@ -70,7 +70,11 @@ ServerosServiceProvider.prototype.validate = function(greeting, callback) {
                 if (callback) callback(err);
                 return;
             }
-            that.idecipher(greeting.id, ticket.oneTimeCredentials.key, ticket.oneTimeCredentials.iv, ticket.cipher, function(err, plaintext) {
+            that.idecipher(greeting.id
+                    , ticket.oneTimeCredentials.key
+                    , ticket.oneTimeCredentials.iv
+                    , ticket.oneTimeCredentials.cipher
+                    , function(err, plaintext) {
                 if (err) {
                     callback(err);
                     return;
@@ -140,7 +144,7 @@ ServerosServiceProvider.prototype.expressValidator = function(onSuccessfulGreeti
                         , requesterNonce: authorized.nonces.requester
                         , finalNonce: authorized.nonces.final
                         , ts: new Date().getTime()
-                    }, authorized.oneTimeCredentials.key, authorized.nonces.iv, authorized.cipher, function(err, ciphertext) {
+                    }, authorized.oneTimeCredentials.key, authorized.nonces.iv, authorized.oneTimeCredentials.cipher, function(err, ciphertext) {
                         if (err) {
                             res.status(err.statusCode).json(err.prepResponseBody());
                         }

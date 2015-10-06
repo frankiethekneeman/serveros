@@ -145,7 +145,11 @@ ServerosConsumer.prototype.authorize = function(serviceLocation, ticket, callbac
                 , ts: new Date().getTime()
             }
             ;
-        that.iencipher(idObject, ticket.oneTimeCredentials.key, ticket.oneTimeCredentials.iv, ticket.cipher, function(err, cipherText) {
+        that.iencipher(idObject
+                , ticket.oneTimeCredentials.key
+                , ticket.oneTimeCredentials.iv
+                , ticket.oneTimeCredentials.cipher
+                , function(err, cipherText) {
             if (err) {
                 callback(err);
                 return null;
@@ -165,7 +169,11 @@ ServerosConsumer.prototype.authorize = function(serviceLocation, ticket, callbac
                 } else if (Math.floor(msg.statusCode / 100) !== 2) {
                     callback(new AuthError.ProtocolError(msg.StatusCode, body));
                 } else {
-                    that.idecipher(body.message, ticket.oneTimeCredentials.key, returnIV, ticket.cipher, function(err, plaintext) {
+                    that.idecipher(body.message
+                            , ticket.oneTimeCredentials.key
+                            , returnIV
+                            , ticket.oneTimeCredentials.cipher
+                            , function(err, plaintext) {
                         if (err) {
                             callback(err);
                             return;

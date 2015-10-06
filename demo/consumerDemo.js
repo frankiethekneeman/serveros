@@ -11,8 +11,8 @@ var ServerosConsumer = require('../src/classes/ServerosConsumer')
             , master: {
                 publicKey: masterPublicKey
             }
-            , hashes: ['sha256', 'sha512']
-            , ciphers: ['aes256', 'aes192']
+            , hashes: ['sha256', 'sha512', 'sha1']
+            , ciphers: ['aes256', 'aes192', 'aes128']
         });
     ;
 

@@ -134,7 +134,7 @@ ServerosMaster.prototype.authenticate = function(authenticationMessage, callback
  */
 ServerosMaster.prototype.buildTicket = function(request, requested, requester, callback) {
     var that = this 
-        , cipher = this.chooseCipher(requested.ciphers);
+        , cipher = this.choose(requester.ciphers, requested.ciphers);
     ;
     this.getOneTimeCredentials(cipher, function(err, credentials) {
         if (err) {
@@ -161,10 +161,11 @@ ServerosMaster.prototype.buildTicket = function(request, requested, requester, c
                     , oneTimeCredentials: {
                         key: credentials.key.toString('base64')
                         , iv: credentials.iv.toString('base64')
+                        , cipher: cipher
+                        , hash: that.choose(requester.hashes, requested.hashes)
                     }
+                    , hash: that.choose(requester.hashes, requested.hashes)
                     , "ts": new Date().getTime()
-                    , cipher: cipher
-                    , hash: that.chooseHash(requested.hashes)
                     , expires: request.ts + requested.keysLast
                     , authData: requester.authData
                 }
@@ -207,7 +208,8 @@ ServerosMaster.prototype.getTicket = function(request, requester, callback) {
                 callback(err);
                 return;
             }
-            that.iencryptAndSign(requested.publicKey, ticket, ticket.cipher, ticket.hash, function(err, message) {
+            that.iencryptAndSign(requested.publicKey, ticket, that.chooseCipher(requested.ciphers)
+                , ticket.hash, function(err, message) {
                 if (err)
                     callback(err);
                 else
@@ -247,11 +249,10 @@ ServerosMaster.prototype.prepResponse = function(ticket, requester, callback) {
             , ts: ticket.raw.ts
             , oneTimeCredentials: ticket.raw.oneTimeCredentials
             , hash: this.chooseHash(requester.hashes)
-            , cipher: ticket.raw.cipher
             , expires: ticket.raw.expires
             , ticket: ticket.ready
         };
-    this.iencryptAndSign(requester.publicKey, response, response.cipher, response.hash, function(err, encrypted) {
+    this.iencryptAndSign(requester.publicKey, response, this.chooseCipher(requester.ciphers), response.hash, function(err, encrypted) {
         if (err)
             callback(err);
         else 
@@ -286,6 +287,29 @@ ServerosMaster.prototype.addAuthenticationEndpoint = function(application) {
     });
 };
 
+ServerosMaster.prototype.choose = function(setA, setB) {
+    if (!(setA.length) && !(setB.length))
+        return null;
+    if (!(setA.length))
+        return setB[0];
+    if (!(setB.length))
+        return setA[0];
+    if (setA[0] == setB[0])
+        return setA[0];
+    if (setA.length < setB.length)
+        return this.choose(setB, setA); //Ensure that setB is strictly smaller than setA
+    var chosen = null
+        , score = setB.length + setA.length + 1;
+    for (var i = 0; i < setB.length; i++) {
+        var index = setA.indexOf(setB[i])
+            , currScore = index + i;
+        if (index > -1 && currScore < score) {
+            score = currScore;
+            chosen = setB[i];
+        }
+    }
+    return chosen;
+}
 /**
  *  Choose the best hash.
  *  
@@ -293,7 +317,7 @@ ServerosMaster.prototype.addAuthenticationEndpoint = function(application) {
  *  @todo make this do something interesting.
  */
 ServerosMaster.prototype.chooseHash = function(supported) {
-    return this.hashPrefs[0];
+    return this.choose(this.hashPrefs, supported);
 };
 
 /**
@@ -303,7 +327,7 @@ ServerosMaster.prototype.chooseHash = function(supported) {
  *  @todo make this do something interesting.
  */
 ServerosMaster.prototype.chooseCipher = function(supported) {
-    return this.cipherPrefs[0];
+    return this.choose(this.cipherPrefs, supported);
 };
 
 /**

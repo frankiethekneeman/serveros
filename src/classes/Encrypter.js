@@ -126,7 +126,7 @@ Encrypter.prototype = {
         try {
             if (!(this.cipherCheck[cipherName]) || !facts) {
                 if (callback)
-                    callback("Cipher " + cipherName + " not supported.");
+                    callback(new CryptoError.UnrecognizedCipherError(cipherName, ciphers));
             } else {
                 crypto.randomBytes(Math.ceil(facts.key/8), function(err, key) {
                     if (err) {
@@ -202,6 +202,15 @@ Encrypter.prototype = {
      */
     decipher: function(ciphertext, key, iv, algorithm, callback) {
         try {
+            if (this.cipherPrefs.indexOf(algorithm) == -1) {
+                if (callback) {
+                    var that = this;
+                    process.nextTick(function() {
+                        callback(new CryptoError.UnrecognizedCipherError(algorithm, that.cipherPrefs));
+                    });
+                }
+                return;
+            }
             if (!(ciphertext instanceof Buffer))
                 ciphertext = new Buffer(ciphertext, 'base64');
             if (!(key instanceof Buffer))
@@ -246,6 +255,15 @@ Encrypter.prototype = {
      */
     encipher: function(message, key, initialVector, algorithm, callback) {
         try {
+            if (this.cipherPrefs.indexOf(algorithm) == -1) {
+                if (callback) {
+                    var that = this;
+                    process.nextTick(function() {
+                        callback(new CryptoError.UnrecognizedCipherError(algorithm, that.cipherPrefs));
+                    });
+                }
+                return;
+            }
             if (!(message instanceof Buffer))
                 message = new Buffer(message, 'utf8');
             if (!(key instanceof Buffer))
@@ -388,6 +406,15 @@ Encrypter.prototype = {
      */
     sign: function(rsaKey, data, algorithm, callback) {
         try {
+            if (this.hashPrefs.indexOf(algorithm) == -1) {
+                if (callback) {
+                    var that = this;
+                    process.nextTick(function() {
+                        callback(new CryptoError.UnrecognizedHashError(algorithm, that.hashPrefs));
+                    });
+                }
+                return;
+            }
             var signer = crypto.createSign(algorithm);
             signer.end(new Buffer(data), function() {
                 try {
@@ -425,6 +452,15 @@ Encrypter.prototype = {
      */
     verify: function(rsaKey, data, algorithm, signature, callback) {
         try {
+            if (this.hashPrefs.indexOf(algorithm) == -1) {
+                if (callback) {
+                    var that = this;
+                    process.nextTick(function() {
+                        callback(new CryptoError.UnrecognizedHashError(algorithm, that.hashPrefs));
+                    });
+                }
+                return;
+            }
             if (!(data instanceof Buffer))
                 new Buffer(data, 'base64');
             var verifier = crypto.createVerify(algorithm);
@@ -438,7 +474,11 @@ Encrypter.prototype = {
                      *  @param {ServerosError} error Any Error that prevents Decryption
                      *  @param {Boolean} verified True if the signature matches, false if it does not.
                      */
-                    if(callback) callback(null, verified);
+                    if(callback) {
+                        if (!verified)
+                            callback(new CryptoError.VerificationError());
+                        else callback(null, verified);
+                    }
                 } catch (err) {
                     if (callback)
                         callback(new CryptoError.RSAError(err));

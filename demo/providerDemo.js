@@ -13,8 +13,8 @@ var ServerosServiceProvider = require('../src/classes/ServerosServiceProvider')
             , master: {
                 publicKey: masterPublicKey
             }
-            , hashes: ['sha256', 'sha512']
-            , ciphers: ['aes256', 'aes192']
+            , hashes: ['sha256', 'sha1', 'sha512']
+            , ciphers: ['aes256', 'aes192', 'aes128']
         })
     , hawkstuff = null
     , authenticator = new HawkAuthenticator();
