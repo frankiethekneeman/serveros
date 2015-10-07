@@ -13,7 +13,7 @@ var ServerosError = require('./ServerosError')
  *  @param {Integer} [statusCode] A status code for use in HTTP responses.
  */
 function UnsupportedError(requested, supported, message, statusCode) {
-    ServerosError.call(this, "An unsupported cipher was encountered");
+    ServerosError.call(this, message, statusCode);
     if (requested) this.requested = requested;
     if (supported) this.supported = supported;
 }

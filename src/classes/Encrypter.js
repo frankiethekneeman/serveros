@@ -208,7 +208,7 @@ Encrypter.prototype = {
                 if (callback) {
                     var that = this;
                     process.nextTick(function() {
-                        callback(new CryptoError.UnrecognizedCipherError(algorithm, that.cipherPrefs));
+                        callback(new CryptoError.UnsupportedCipherError(algorithm, that.cipherPrefs));
                     });
                 }
                 return;
@@ -261,7 +261,7 @@ Encrypter.prototype = {
                 if (callback) {
                     var that = this;
                     process.nextTick(function() {
-                        callback(new CryptoError.UnrecognizedCipherError(algorithm, that.cipherPrefs));
+                        callback(new CryptoError.UnsupportedCipherError(algorithm, that.cipherPrefs));
                     });
                 }
                 return;
@@ -412,7 +412,7 @@ Encrypter.prototype = {
                 if (callback) {
                     var that = this;
                     process.nextTick(function() {
-                        callback(new CryptoError.UnrecognizedHashError(algorithm, that.hashPrefs));
+                        callback(new CryptoError.UnsupportedHashError(algorithm, that.hashPrefs));
                     });
                 }
                 return;
@@ -458,7 +458,7 @@ Encrypter.prototype = {
                 if (callback) {
                     var that = this;
                     process.nextTick(function() {
-                        callback(new CryptoError.UnrecognizedHashError(algorithm, that.hashPrefs));
+                        callback(new CryptoError.UnsupportedHashError(algorithm, that.hashPrefs));
                     });
                 }
                 return;

@@ -102,6 +102,24 @@ ServerosConsumer.prototype.requestTicket = function(requested, callback) {
                 if (err) {
                     callback(new AuthError.HTTPError(err));
                 } else if (Math.floor(msg.statusCode / 100) !== 2) {
+                    if (msg.statusCode == 409) {
+                        for(var i = 0; i < that.cipherPrefs.length; i++) {
+                            if (body.additionalInformation.supported.indexOf(that.cipherPrefs[i]) != -1) {
+                                that.chosenCipher = that.cipherPrefs[i];
+                                that.requestTicket(requested, callback);
+                                return;
+                            } //Check if the Master supports it.
+                        } //For each cipher I support
+                    } //unsupportedCipher.
+                    else if (msg.statusCode == 490) {
+                        for(var i = 0; i < that.hashPrefs.length; i++) {
+                            if (body.additionalInformation.supported.indexOf(that.hashPrefs[i]) != -1) {
+                                that.chosenHash = that.hashPrefs[i];
+                                that.requestTicket(requested, callback);
+                                return;
+                            } //Check if the Master supports it.
+                        } //For each hash I support
+                    } //unsupportedHash
                     callback(new AuthError.ProtocolError(msg.StatusCode, body));
                 } else {
                     that.idecryptAndVerify(body, function(err, decrypted) {

@@ -22,9 +22,19 @@ module.exports = exports = {
     UnrecognizedCipherError : require('./UnrecognizedCipherError') ,
 
     /**
+     *  {@link Error.CryptoError.UnsupportedCipherError UnsupportedCipherError}
+     */
+    UnsupportedCipherError : require('./UnsupportedCipherError') ,
+
+    /**
      *  {@link Error.CryptoError.UnrecognizedHashError UnrecognizedHashError}
      */
     UnrecognizedHashError   : require('./UnrecognizedHashError')   ,
+
+    /**
+     *  {@link Error.CryptoError.UnsupportedHashError UnsupportedHashError}
+     */
+    UnsupportedHashError   : require('./UnsupportedHashError')   ,
 
     /**
      *  {@link Error.CryptoError.RSAError RSAError}

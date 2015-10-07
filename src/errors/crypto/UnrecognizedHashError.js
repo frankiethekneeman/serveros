@@ -11,7 +11,7 @@ var UnsupportedError = require('../UnsupportedError')
  *  @param {String[]} supportedHashes The Hashes actually supported.
  */
 function UnrecognizedHashError(hashRequested, supportedHashes) {
-    UnsupportedError.call(this, hashRequested, supportedHashes, "An unsupported hash was encountered");
+    UnsupportedError.call(this, hashRequested, supportedHashes, "An unrecognized hash was encountered");
 };
 
 UnrecognizedHashError.prototype = Object.create(UnsupportedError.prototype);

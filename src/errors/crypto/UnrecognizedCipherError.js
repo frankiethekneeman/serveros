@@ -11,7 +11,7 @@ var UnsupportedError = require('../UnsupportedError')
  *  @param {String[]} supportedCiphers The list of supported Ciphers.
  */
 function UnrecognizedCipherError(cipherRequested, supportedCiphers) {
-    UnsupportedError.call(this, cipherRequested, supportedCiphers, "An unsupported cipher was encountered");
+    UnsupportedError.call(this, cipherRequested, supportedCiphers, "An unrecognized cipher was encountered");
 };
 
 UnrecognizedCipherError.prototype = Object.create(UnsupportedError.prototype);
