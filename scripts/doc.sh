@@ -1,3 +1,3 @@
 #!/bin/bash
-rm -rf out/
+rm -rf jsdoc/output/
 jsdoc -c jsdoc/conf.json

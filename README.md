@@ -1,6 +1,6 @@
-# Serveros
+Authentication and Authorization for the modern age.
 
-Authentication and Authorization for the modern age.  Security is hard.  And when it's not implemented
+Security is hard.  And when it's not implemented
 by dedicated experts it tends to get underdone.  People reuse the same keys over and over again.  They
 choose keys that are easy to write or remember.  The don't bother to cycle those keys.  Plus, it's hard
 to update keys if one of your many applications is compromised.  Serveros is here to try and make that

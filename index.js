@@ -1,6 +1,22 @@
+/**
+ *  @module Serveros
+ */
 module.exports = exports = {
-    ServerosMaster: "./src/classes/ServerosMaster"
-    , ServerosServiceProvider: "./src/classes/ServerosServiceProvider"
-    , ServerosConsumer: "./src/classes/ServerosConsumer"
-    , HawkAuthenticator: "./src/classes/HawkAuthenticator"
+
+    /**
+     *  {@link Serveros.ServerosMaster ServerosMaster}
+     */
+    ServerosMaster          : "./src/classes/ServerosMaster"          ,
+    /**
+     *  {@link Serveros.ServerosServiceProvider ServerosServiceProvider}
+     */
+    ServerosServiceProvider : "./src/classes/ServerosServiceProvider" ,
+    /**
+     *  {@link Serveros.ServerosConsumer ServerosConsumer}
+     */
+    ServerosConsumer        : "./src/classes/ServerosConsumer"        ,
+    /**
+     *  {@link Plugins.HawkAuthenticator HawkAuthenticator}
+     */
+    HawkAuthenticator       : "./src/classes/HawkAuthenticator"
 }

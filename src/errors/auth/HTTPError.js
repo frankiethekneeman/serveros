@@ -1,6 +1,14 @@
 var WrappedError = require('../WrappedError')
     ;
 
+/**
+ *  Signals an Error occured while making an HTTP request.
+ *  
+ *  @class Error.AuthError.HTTPError
+ *  @extends WrappedError
+ *  @inheritdoc
+ *  @param {Error} err The HTTP error.
+ */
 function HTTPError(err) {
     WrappedError.call(this, err, "HTTP Error");
 }

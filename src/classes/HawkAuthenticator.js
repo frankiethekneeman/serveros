@@ -4,22 +4,22 @@ var Hawk = require('hawk')
 
 /**
  *  A helper class to do Hawk Authentication for Consumers.
- *  @class
+ *  @class Plugins.HawkAuthenticator
  *  
  *  @param {Object} [storageInterface=InMemoryStorage]  A storage interface for the Credentials as they're unpacked.
- *  @param {HawkAuthenticator~StorageInterfaceStore} storageInterface.store
- *  @param {HawkAuthenticator~StorageInterfaceRetrieve} storageInterface.retrieve
- *  @param {HawkAuthenticator~StorageInterfacePurge} storageInterface.purge
+ *  @param {Plugins.HawkAuthenticator~StorageInterfaceStore} storageInterface.store
+ *  @param {Plugins.HawkAuthenticator~StorageInterfaceRetrieve} storageInterface.retrieve
+ *  @param {Plugins.HawkAuthenticator~StorageInterfacePurge} storageInterface.purge
  */
 function HawkAuthenticator(storageInterface) {
     this.storage = storageInterface || {
         /**
          *  Store some credentials for later retrieval.
          *  
-         *  @callback HawkAuthenticator~StorageInterfaceStore
+         *  @callback Plugins.HawkAuthenticator~StorageInterfaceStore
          *  @param {String} key The key which will be used to retrieve the credentials.
          *  @param {Object} credentials The credentials which will need retrieval.
-         *  @param {HawkAuthenticator~thinCallback} callback A callback for the results of the operation.
+         *  @param {Plugins.HawkAuthenticator~thinCallback} callback A callback for the results of the operation.
          */
         store: function(key, credentials, callback) {
             inMemoryHash[key]  = credentials;
@@ -31,9 +31,9 @@ function HawkAuthenticator(storageInterface) {
         /**
          *  Retrieve some credentials.
          *  
-         *  @callback HawkAuthenticator~StorageInterfaceRetrieve
+         *  @callback Plugins.HawkAuthenticator~StorageInterfaceRetrieve
          *  @param {String} key The key which was used to store the credentials.
-         *  @param {HawkAuthenticator~thinCallback} callback A callback for the results of the operation.
+         *  @param {Plugins.HawkAuthenticator~thinCallback} callback A callback for the results of the operation.
          */
         retrieve: function(id, callback) {
             var toReturn = inMemoryHash[id];
@@ -45,9 +45,9 @@ function HawkAuthenticator(storageInterface) {
         /**
          *  Eliminate some credentials from 
          *  
-         *  @callback HawkAuthenticator~StorageInterfacePurge
+         *  @callback Plugins.HawkAuthenticator~StorageInterfacePurge
          *  @param {String} key The key which was used to store the credentials.
-         *  @param {HawkAuthenticator~thinCallback} callback A callback for the results of the operation.
+         *  @param {Plugins.HawkAuthenticator~thinCallback} callback A callback for the results of the operation.
          */
         purge: function(id, callback) {
             delete inMemoryHash[id];
@@ -108,7 +108,7 @@ HawkAuthenticator.prototype = {
 module.exports = exports = HawkAuthenticator;
 
 /**
- *  @callback HawkAuthenticator~thinCallback
+ *  @callback Plugins.HawkAuthenticator~thinCallback
  *  @param {mixed} the result of the operation.
  */
 

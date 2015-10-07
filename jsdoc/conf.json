@@ -5,16 +5,20 @@
     },
     "source": {
         "includePattern": ".+\\.js(doc)?$",
+        "include": [
+            "README.md",
+            "src",
+            "index.js"
+        ],
         "excludePattern": "(^|\\/|\\\\)_"
     },
     "plugins": [],
     "opts": {
         "encoding": "utf8",
         "destination": "./jsdoc/output",
-        "recurse": "true"
-    },
-    "source": {
-        "include": "src"
+        "recurse": "true",
+        "readme": "./README.md",
+        "private": "true"
     },
     "templates": {
         "cleverLinks": true,

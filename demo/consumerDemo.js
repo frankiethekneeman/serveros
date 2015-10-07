@@ -11,18 +11,15 @@ var ServerosConsumer = require('../src/classes/ServerosConsumer')
             , master: {
                 publicKey: masterPublicKey
             }
-            , hashes: ['sha256', 'sha512', 'sha1']
-            , ciphers: ['aes256', 'aes192', 'aes128']
+            , hashes: ['md5', 'sha256', 'sha512', 'sha1']
+            , ciphers: ['idea', 'aes256', 'aes192', 'aes128']
         });
     ;
 
 consumer.getCredentials('Application B', 'http://localhost:3501/authenticate', function(err, credentials) {
     if (err) {
         console.log('Error Getting Credentials:');
-        console.log(err.prepResponseBody && err.prepResponseBody() || err);
-        console.log(err.stack);
-        console.log(err.err);
-        console.log(err.err.stack);
+        console.log(err.prepResponseBody && JSON.stringify(err.prepResponseBody()) || err);
         return;
     } else {
         console.log('The Consumer now has Credentials:');

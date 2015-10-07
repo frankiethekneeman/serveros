@@ -1,24 +1,24 @@
-var ServerosError = require('../ServerosError')
+var UnsupportedError = require('../UnsupportedError')
     ;
 
+/**
+ *  A Hash has been encountered that cannot be supported.
+ *  
+ *  @class Error.CryptoError.UnrecognizedHashError
+ *  @extendsUnsupportedError
+ *  @inheritdoc
+ *  @param {String} hashRequested The requested Hash
+ *  @param {String[]} supportedHashes The Hashes actually supported.
+ */
 function UnrecognizedHashError(hashRequested, supportedHashes) {
-    ServerosError.call(this, "An unsupported hash was encountered");
-    this.requested = hashRequested;
-    this.supported = supportedHashes;
-}
+    UnsupportedError.call(this, hashRequested, supportedHashes, "An unsupported hash was encountered");
+};
 
-UnrecognizedHashError.prototype = Object.create(ServerosError.prototype);
+UnrecognizedHashError.prototype = Object.create(UnsupportedError.prototype);
 
 Object.defineProperty(UnrecognizedHashError.prototype, 'constructor', {
     enumerable: false
     , value: UnrecognizedHashError
 });
-
-UnrecognizedHashError.prototype.additionalInformation = function() {
-    return {
-        requested: this.requested
-        , supported: this.supported
-    }
-};
 
 module.exports = exports = UnrecognizedHashError;

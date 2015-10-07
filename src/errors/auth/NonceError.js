@@ -1,8 +1,15 @@
 var ServerosError = require('../ServerosError')
     ;
 
+/**
+ *  Unmatched Nonces Preventing Authentication.
+ *  
+ *  @class Error.AuthError.NonceError
+ *  @extends ServerosError
+ *  @inheritdoc
+ */
 function NonceError() {
-    ServerosError.call(this, "Nonces don't match");
+    ServerosError.call(this, "Nonces don't match", 403);
 }
 
 NonceError.prototype = Object.create(ServerosError.prototype);

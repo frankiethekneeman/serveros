@@ -1,24 +1,24 @@
-var ServerosError = require('../ServerosError')
+var UnsupportedError = require('../UnsupportedError')
     ;
 
+/**
+ *  A cipher that cannot be supported was encountered.
+ *  
+ *  @class Error.CryptoError.UnrecognizedCipherError
+ *  @extends UnsupportedError
+ *  @inheritdoc
+ *  @param {String} cipherRequested The name of the requested Cipher.
+ *  @param {String[]} supportedCiphers The list of supported Ciphers.
+ */
 function UnrecognizedCipherError(cipherRequested, supportedCiphers) {
-    ServerosError.call(this, "An unsupported cipher was encountered");
-    this.requested = cipherRequested;
-    this.supported = supportedCiphers;
-}
+    UnsupportedError.call(this, cipherRequested, supportedCiphers, "An unsupported cipher was encountered");
+};
 
-UnrecognizedCipherError.prototype = Object.create(ServerosError.prototype);
+UnrecognizedCipherError.prototype = Object.create(UnsupportedError.prototype);
 
 Object.defineProperty(UnrecognizedCipherError.prototype, 'constructor', {
     enumerable: false
     , value: UnrecognizedCipherError
 });
-
-UnrecognizedCipherError.prototype.additionalInformation = function() {
-    return {
-        requested: this.requested
-        , supported: this.supported
-    }
-};
 
 module.exports = exports = UnrecognizedCipherError;

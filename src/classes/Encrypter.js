@@ -1,21 +1,23 @@
 var crypto = require('crypto'),
     constants = require('constants'),
-    cipherData = require('../cipherdata.json'),
+    cipherData = require('../cipherdata'),
     CryptoError = require('../errors/crypto'),
 
     /**
      *  The Delimiter for RSA Encryptions
      *  
-     *  @memberOf Encrypter
+     *  @memberOf Serveros.Encrypter
      *  @default
+     *  @private
      */
     DELIMITER = ':',
 
     /**
      *  Tolerance for out of synch clocks
      *  
-     *  @memberOf Encrypter
+     *  @memberOf Serveros.Encrypter
      *  @default
+     *  @private
      */
     STALE_REQUEST_TOLERANCE = 60000 // One minute clock drift allowed.
 
@@ -35,7 +37,7 @@ var crypto = require('crypto'),
      *  ANSI X.923 Bytes are 00 bytes till the end, but the last byte is 01-1F, indicating the number
      *  of padding bytes needed.  It is not being validated.
      *  
-     *  @memberOf Encrypter
+     *  @memberOf Serveros.Encrypter
      *  @default
      */
     PADDING_CHARACTERS = /(?:([\x00-\x1F])\1*|\x80\x00*|\x00*[\x01-\x1F])$/g;
@@ -53,7 +55,7 @@ var hashes = crypto.getHashes();
  *  @return {Object} An object whose keys consist of the items in the array,
  *    and the values assosciated with those keys are boolean true.
  *  
- *  @memberOf Encrypter
+ *  @memberOf Serveros.Encrypter
  *  @static
  */
 function arrayToHashKeys(array) {
@@ -65,7 +67,7 @@ function arrayToHashKeys(array) {
 
 /**
  *  A Base class for all encryption classes.
- *  @class
+ *  @class Serveros.Encrypter
  *  @author Francis J.. Van Wetering IV
  */
 function Encrypter() {
@@ -86,7 +88,7 @@ Encrypter.prototype = {
     /**
      *  Generate a one-time use key for encrypting messages via RSA.
      *  
-     *  @param {Encrypter~randomCallback} callback Will be called with 32 random bytes or an error.
+     *  @param {Serveros.Encrypter~randomCallback} callback Will be called with 32 random bytes or an error.
      */
     oneTimeKey: function(callback) {
         try {
@@ -97,8 +99,8 @@ Encrypter.prototype = {
                     else 
                         /**
                          *  Callback for functions generating random bytes.
-                         *  @callback Encrypter~randomCallback
-                         *  @param {ServerosError} error Any Error that prevents generation of random bytes.
+                         *  @callback Serveros.Encrypter~randomCallback
+                         *  @param {Error.ServerosError} error Any Error that prevents generation of random bytes.
                          *  @param {Buffer} key A buffer with the correct number of bytes.
                          */
                         callback(null, key);
@@ -117,7 +119,7 @@ Encrypter.prototype = {
      *  initial vector of size equal to the block size for a known ciphers.
      *  
      *  @param {String} cipherName The name of the intended Cipher.
-     *  @param {Encrypter~credentialsCallback} callback a callback for the eventual credentials.
+     *  @param {Serveros.Encrypter~credentialsCallback} callback a callback for the eventual credentials.
      */
     getOneTimeCredentials: function(cipherName, callback) {
         var that = this
@@ -144,12 +146,12 @@ Encrypter.prototype = {
 
                                     /**
                                      *  Callback for getOneTimeCredentials
-                                     *  @callback Encrypter~credentialsCallback
-                                     *  @param {ServerosError} error Any Error that prevents generation of random bytes.
+                                     *  @callback Serveros.Encrypter~credentialsCallback
+                                     *  @param {Error.ServerosError} error Any Error that prevents generation of random bytes.
                                      *  @param {Object} credentials The key, IV, and name of the cipher.
                                      *  @param {Buffer} credentials.key A random key.
                                      *  @param {Buffer} credentials.iv A random initial Vector
-                                     *  @param {String} credentials.algorithm The cipherName passed into {@link Encrypter~getOneTimeCredentials}
+                                     *  @param {String} credentials.algorithm The cipherName passed into {@link Serveros.Encrypter~getOneTimeCredentials}
                                      */
                                     callback(null, {
                                         key: key
@@ -172,7 +174,7 @@ Encrypter.prototype = {
     /**
      *  Generate a short use key for consumer/provider authentication.
      *  
-     *  @param {Encrypter~randomCallback} callback Will be called with 64 random bytes or an error.
+     *  @param {Serveros.Encrypter~randomCallback} callback Will be called with 64 random bytes or an error.
      */
     shortUseKey: function(callback) {
         try {
@@ -198,7 +200,7 @@ Encrypter.prototype = {
      *  @param {Buffer|String} ciphertext Either a buffer with cipher bytes, or a base64 encoded string.
      *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
      *  @param {Buffer|String} algorithm The cipher algorithm to use while deciphering.
-     *  @param {Encrypter~decipherCallback} callback A callback for the eventual error or plaintext.
+     *  @param {Serveros.Encrypter~decipherCallback} callback A callback for the eventual error or plaintext.
      */
     decipher: function(ciphertext, key, iv, algorithm, callback) {
         try {
@@ -226,8 +228,8 @@ Encrypter.prototype = {
 
                     /**
                      *  Callback for decipher
-                     *  @callback Encrypter~decipherCallback
-                     *  @param {ServerosError} error Any Error that prevents deciphering
+                     *  @callback Serveros.Encrypter~decipherCallback
+                     *  @param {Error.ServerosError} error Any Error that prevents deciphering
                      *  @param {String} plaintext A UTF8 Encoded Plaintext string
                      */
                     if (callback) callback(null, plaintext);
@@ -251,7 +253,7 @@ Encrypter.prototype = {
      *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
      *  @param {Buffer|String} initialVector Either a buffer with IV bytes, or a base64 encoded string.
      *  @param {Buffer|String} algorithm The cipher algorithm to use while deciphering.
-     *  @param {Encrypter~encipherCallback} callback A callback for the eventual error or plaintext.
+     *  @param {Serveros.Encrypter~encipherCallback} callback A callback for the eventual error or plaintext.
      */
     encipher: function(message, key, initialVector, algorithm, callback) {
         try {
@@ -277,8 +279,8 @@ Encrypter.prototype = {
 
                     /**
                      *  Callback for encipher
-                     *  @callback Encrypter~encipherCallback
-                     *  @param {ServerosError} error Any Error that prevents deciphering
+                     *  @callback Serveros.Encrypter~encipherCallback
+                     *  @param {Error.ServerosError} error Any Error that prevents deciphering
                      *  @param {String} ciphertext A base64 Encoded Ciphertext string
                      */
                     if (callback) callback(null, cipherText);
@@ -303,7 +305,7 @@ Encrypter.prototype = {
      *  @param {Buffer|String} rsaKey A PEM Encoded RSA Key (Public Key)
      *  @param {Buffer|String} message Either a buffer with plaintext bytes, or a utf8 encoded string.
      *  @param {String} algorithm The cipher algorithm to use while enciphering.
-     *  @param {Encrypter~encryptCallback} callback A callback for the eventual error or ciphertext.
+     *  @param {Serveros.Encrypter~encryptCallback} callback A callback for the eventual error or ciphertext.
      */
     encrypt: function(rsaKey, data, algorithm, callback) {
         try {
@@ -332,8 +334,8 @@ Encrypter.prototype = {
 
                             /**
                              *  Callback for encrypt
-                             *  @callback Encrypter~encryptCallback
-                             *  @param {ServerosError} error Any Error that prevents Encryption
+                             *  @callback Serveros.Encrypter~encryptCallback
+                             *  @param {Error.ServerosError} error Any Error that prevents Encryption
                              *  @param {String} ciphertext A base64 Encoded Ciphertext string
                              */
                             if (callback) callback(null, encryptedMessage);
@@ -360,7 +362,7 @@ Encrypter.prototype = {
      *  
      *  @param {Buffer|String} rsaKey A PEM Encoded RSA Key (Private Key)
      *  @param {Buffer|String} data The output of a previous call to Encrypt
-     *  @param {Encrypter~decryptCallback} callback A callback for the eventual error or plaintext
+     *  @param {Serveros.Encrypter~decryptCallback} callback A callback for the eventual error or plaintext
      */
     decrypt: function(rsaKey, data, callback) {
         try {
@@ -378,8 +380,8 @@ Encrypter.prototype = {
                     }
                     /**
                      *  Callback for decrypt
-                     *  @callback Encrypter~decryptCallback
-                     *  @param {ServerosError} error Any Error that prevents Decryption
+                     *  @callback Serveros.Encrypter~decryptCallback
+                     *  @param {Error.ServerosError} error Any Error that prevents Decryption
                      *  @param {String} ciphertext A UTF-8 Encoded Plaintext string
                      */
                     if (callback) callback(null, JSON.parse(plainText));
@@ -402,7 +404,7 @@ Encrypter.prototype = {
      *  @param {Buffer|String} rsaKey A PEM Encoded RSA Key (Private Key)
      *  @param {Buffer|String} data The data to be signed.
      *  @param {String} algorithm The Hash algorithm to use whilst calculating the HMAC
-     *  @param {Encrypter~signCallback} callback A callback for the eventual error or signature
+     *  @param {Serveros.Encrypter~signCallback} callback A callback for the eventual error or signature
      */
     sign: function(rsaKey, data, algorithm, callback) {
         try {
@@ -422,8 +424,8 @@ Encrypter.prototype = {
 
                     /**
                      *  Callback for sign
-                     *  @callback Encrypter~signCallback
-                     *  @param {ServerosError} error Any Error that prevents Decryption
+                     *  @callback Serveros.Encrypter~signCallback
+                     *  @param {Error.ServerosError} error Any Error that prevents Decryption
                      *  @param {String} signature The Base64 Signature.
                      */
                     if(callback) callback(null, signature);
@@ -448,7 +450,7 @@ Encrypter.prototype = {
      *  @param {String} algorithm The Hash algorithm to use whilst calculating the HMAC
      *  @param {Buffer|String} signature The previously generated Signature - as a buffer or base64
      *      encoded String.
-     *  @param {Encrypter~verifyCallback} callback A callback for the eventual error or verification Status
+     *  @param {Serveros.Encrypter~verifyCallback} callback A callback for the eventual error or verification Status
      */
     verify: function(rsaKey, data, algorithm, signature, callback) {
         try {
@@ -470,8 +472,8 @@ Encrypter.prototype = {
 
                     /**
                      *  Callback for verify
-                     *  @callback Encrypter~verifyCallback
-                     *  @param {ServerosError} error Any Error that prevents Decryption
+                     *  @callback Serveros.Encrypter~verifyCallback
+                     *  @param {Error.ServerosError} error Any Error that prevents Decryption
                      *  @param {Boolean} verified True if the signature matches, false if it does not.
                      */
                     if(callback) {
@@ -503,14 +505,14 @@ Encrypter.prototype = {
     },
     
     /**
-     *  Encrypt and Sign - a simple concatentation of {@link Encrypter.encrypt encrypt} and {@link Encrypter.sign sign}.
+     *  Encrypt and Sign - a simple concatentation of {@link Serveros.Encrypter.encrypt encrypt} and {@link Serveros.Encrypter.sign sign}.
      *  
      *  @param {Buffer|String} encryptKey A PEM Encoded RSA Key (Public Key)
      *  @param {Buffer|String} signKey A PEM Encoded RSA Key (Private Key)
      *  @param {Buffer|String} message Either a buffer with plaintext bytes, or a utf8 encoded string.
      *  @param {String} cipher The cipher algorithm to use while enciphering.
      *  @param {String} hash The Hash algorithm to use whilst calculating the HMAC
-     *  @param {Encrypter~encryptAndSignCallback} callback A callback for the eventual error or encrypted/signed message.
+     *  @param {Serveros.Encrypter~encryptAndSignCallback} callback A callback for the eventual error or encrypted/signed message.
      */
     encryptAndSign: function(encryptKey, signKey, message, cipher, hash, callback) {
         var that = this;
@@ -526,8 +528,8 @@ Encrypter.prototype = {
 
                     /**
                      *  Callback for encryptAndSign
-                     *  @callback Encrypter~encryptAndSignCallback
-                     *  @param {ServerosError} error Any Error that prevents Decryption
+                     *  @callback Serveros.Encrypter~encryptAndSignCallback
+                     *  @param {Error.ServerosError} error Any Error that prevents Decryption
                      *  @param {Object} message Encrypted and signed messages.
                      */
                     callback(null, {
@@ -539,12 +541,12 @@ Encrypter.prototype = {
     },
 
     /**
-     *  Decrypt and Verify - a simple concatentation of {@link Encrypter.decrypt decrypt} and {@link Encrypter.verify verify}
+     *  Decrypt and Verify - a simple concatentation of {@link Serveros.Encrypter.decrypt decrypt} and {@link Serveros.Encrypter.verify verify}
      *  
      *  @param {Buffer|String} encryptKey A PEM Encoded RSA Key (Public Key)
      *  @param {Buffer|String} signKey A PEM Encoded RSA Key (Private Key)
-     *  @param {Object} The over the wire message - shaped like output from {@link Encrypter.encryptAndSign encryptAndSign}
-     *  @param {Encrypter~decryptAndVerifyCallback} callback A callback for the eventual error or plaintext
+     *  @param {Object} The over the wire message - shaped like output from {@link Serveros.Encrypter.encryptAndSign encryptAndSign}
+     *  @param {Serveros.Encrypter~decryptAndVerifyCallback} callback A callback for the eventual error or plaintext
      */
     decryptAndVerify: function(decryptKey, verifyKey, message, callback) {
         var that = this;
@@ -561,9 +563,9 @@ Encrypter.prototype = {
                 else
 
                     /**
-                     *  Callback for Encrypter~decryptAndVerify
-                     *  @callback decryptAndVerifyCallback
-                     *  @param {ServerosError} error Any Error that prevents Decryption or Verification
+                     *  Callback for Serveros.Encrypter~decryptAndVerify
+                     *  @callback Serveros.Encrypter~decryptAndVerifyCallback
+                     *  @param {Error.ServerosError} error Any Error that prevents Decryption or Verification
                      *  @param {Object} plaintext the plaintext message, if verified.
                      */
                     callback(null, plaintext);
