@@ -125,7 +125,7 @@ ServerosConsumer.prototype.requestTicket = function(requested, callback) {
                     that.idecryptAndVerify(body, function(err, decrypted) {
                         if (err)
                             callback(err);
-                        else if(decrypted.requestNonce == authRequest.nonce)
+                        else if(decrypted.requesterNonce != authRequest.nonce) 
                             callback(new AuthError.NonceError());
                         else if(that.isStale(decrypted.ts))
                             callback(new AuthError.StaleError());

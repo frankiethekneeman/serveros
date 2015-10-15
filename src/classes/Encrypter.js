@@ -199,6 +199,7 @@ Encrypter.prototype = {
      *  
      *  @param {Buffer|String} ciphertext Either a buffer with cipher bytes, or a base64 encoded string.
      *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
+     *  @param {Buffer|String} IV Either a buffer with IV bytes, or a base64 encoded string.
      *  @param {Buffer|String} algorithm The cipher algorithm to use while deciphering.
      *  @param {Serveros.Encrypter~decipherCallback} callback A callback for the eventual error or plaintext.
      */
@@ -298,9 +299,9 @@ Encrypter.prototype = {
     },
 
     /**
-     *  Encipher the data in question (via JSON Encoded String) with a one-time 256bit key, then 
-     *  encrypt the key with the provided RSA key.  The two ciphertexts are then base64 encoded 
-     *  and joined with a delimeter to provide the Encrypted Text.
+     *  Encipher the data in question (via JSON Encoded String) with a one-time key/IV, then 
+     *  encrypt the key/IV with the provided RSA key.  The two ciphertexts are then base64 encoded 
+     *  and joined with a delimiter to provide the Encrypted Text.
      *  
      *  @param {Buffer|String} rsaKey A PEM Encoded RSA Key (Public Key)
      *  @param {Buffer|String} message Either a buffer with plaintext bytes, or a utf8 encoded string.

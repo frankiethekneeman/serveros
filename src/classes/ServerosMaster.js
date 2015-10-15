@@ -280,7 +280,8 @@ ServerosMaster.prototype.addAuthenticationEndpoint = function(application) {
             if (err) {
                 res.status(err.statusCode).json(err.prepResponseBody());
                 console.error(err.prepResponseBody());
-                console.error(err.err && err.err.stack);
+                if (err.err)
+                    console.error(err.err.stack);
             } else 
                 res.json(response);
         });

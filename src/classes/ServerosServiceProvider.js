@@ -100,7 +100,6 @@ ServerosServiceProvider.prototype.validate = function(greeting, callback) {
                         , authData: ticket.authData
                         , requester: ticket.requester
                         , hash: ticket.hash
-                        , cipher: ticket.cipher
                         , expires: ticket.expires
                         , oneTimeCredentials: ticket.oneTimeCredentials
                         , nonces: {
@@ -128,6 +127,9 @@ ServerosServiceProvider.prototype.expressValidator = function(onSuccessfulGreeti
         that.validate(greeting, function(err, authorized) {
             if (err) {
                 res.status(err.statusCode).json(err.prepResponseBody());
+                console.error(err.prepResponseBody());
+                if (err.err)
+                    console.error(err.err.stack);
             } else {
                 try {
 
@@ -147,6 +149,9 @@ ServerosServiceProvider.prototype.expressValidator = function(onSuccessfulGreeti
                     }, authorized.oneTimeCredentials.key, authorized.nonces.iv, authorized.oneTimeCredentials.cipher, function(err, ciphertext) {
                         if (err) {
                             res.status(err.statusCode).json(err.prepResponseBody());
+                            console.error(err.prepResponseBody());
+                            if (err.err)
+                                console.error(err.err.stack);
                         }
                         res.json({message:ciphertext});
                     });
