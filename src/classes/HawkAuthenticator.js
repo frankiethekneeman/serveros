@@ -5,7 +5,7 @@ var Hawk = require('hawk')
 /**
  *  A helper class to do Hawk Authentication for Consumers.
  *  @class Plugins.HawkAuthenticator
- *  
+ *
  *  @param {Object} [storageInterface=InMemoryStorage]  A storage interface for the Credentials as they're unpacked.
  *  @param {Plugins.HawkAuthenticator~StorageInterfaceStore} storageInterface.store
  *  @param {Plugins.HawkAuthenticator~StorageInterfaceRetrieve} storageInterface.retrieve
@@ -15,7 +15,7 @@ function HawkAuthenticator(storageInterface) {
     this.storage = storageInterface || {
         /**
          *  Store some credentials for later retrieval.
-         *  
+         *
          *  @callback Plugins.HawkAuthenticator~StorageInterfaceStore
          *  @param {String} key The key which will be used to retrieve the credentials.
          *  @param {Object} credentials The credentials which will need retrieval.
@@ -26,11 +26,11 @@ function HawkAuthenticator(storageInterface) {
             process.nextTick( function() {
                 if (callback) callback(true);
             });
-        }, 
+        },
 
         /**
          *  Retrieve some credentials.
-         *  
+         *
          *  @callback Plugins.HawkAuthenticator~StorageInterfaceRetrieve
          *  @param {String} key The key which was used to store the credentials.
          *  @param {Plugins.HawkAuthenticator~thinCallback} callback A callback for the results of the operation.
@@ -43,8 +43,8 @@ function HawkAuthenticator(storageInterface) {
         },
 
         /**
-         *  Eliminate some credentials from 
-         *  
+         *  Eliminate some credentials from
+         *
          *  @callback Plugins.HawkAuthenticator~StorageInterfacePurge
          *  @param {String} key The key which was used to store the credentials.
          *  @param {Plugins.HawkAuthenticator~thinCallback} callback A callback for the results of the operation.
@@ -61,7 +61,7 @@ function HawkAuthenticator(storageInterface) {
 HawkAuthenticator.prototype = {
     /**
      *  Create a credentials acceptance function to pass into {@link ServerosServiceProvider.expressValidator}
-     *  
+     *
      *  @return {ServerosServiceProvider~validatorCallback} a credentials function.
      */
     credentialsAccepter: function() {
@@ -69,10 +69,10 @@ HawkAuthenticator.prototype = {
         return function(credentials) {
             that.storage.store(credentials.id, credentials);
         };
-    }, 
+    },
     /**
      *  Create a credentials acceptance function to pass into {@link ServerosServiceProvider.expressValidator}
-     *  
+     *
      *  @return {function} an Express filter.
      */
     expressAuthorizer: function() {
@@ -111,4 +111,3 @@ module.exports = exports = HawkAuthenticator;
  *  @callback Plugins.HawkAuthenticator~thinCallback
  *  @param {mixed} the result of the operation.
  */
-

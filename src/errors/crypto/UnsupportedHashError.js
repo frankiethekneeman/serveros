@@ -3,7 +3,7 @@ var UnsupportedError = require('../UnsupportedError')
 
 /**
  *  A Hash has been encountered that cannot be supported.
- *  
+ *
  *  @class Error.CryptoError.UnsupportedHashError
  *  @extendsUnsupportedError
  *  @inheritdoc

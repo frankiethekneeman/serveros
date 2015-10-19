@@ -10,9 +10,9 @@ var crypto = require('crypto')
  *  to use a Service Provider on the Network.
  *  @extends Serveros.Encrypter
  *  @class Serveros.ServerosConsumer
- *  
+ *
  *  @param {Object} options
- *  @param {mixed} options.id Anything that can be (a) JSON encoded and (b) used by the 
+ *  @param {mixed} options.id Anything that can be (a) JSON encoded and (b) used by the
  *      Authentication Master to uniquely identify the consumer
  *  @param {string} options.privateKey The Private Key for the Consumer, as a PEM encoded string. The matching
  *      Public key should be registered with the Authentication Master separately
@@ -22,7 +22,7 @@ var crypto = require('crypto')
  *  @param {string[]} [options.hashes={@link Serveros.Encrypter.hashes}] A list of acceptable hashes, in order of descending preference
  *  @param {string[]} [options.ciphers={@link Serveros.Encrypter.ciphers}] A list of acceptable Ciphers, in order of descending preference
  */
-function ServerosConsumer(options) { 
+function ServerosConsumer(options) {
     var that = this;
     this.id = options.id;
     this.privateKey = options.privateKey;
@@ -40,7 +40,7 @@ function ServerosConsumer(options) {
     }
     this.master = {
         host: options.master.location || 'localhost:3500'
-        , publicKey: options.master.publicKey 
+        , publicKey: options.master.publicKey
     };
     //Chose an initial Hash and Cipher.
     this.chosenHash = this.hashPrefs[0];
@@ -57,7 +57,7 @@ Object.defineProperty(ServerosConsumer.prototype, 'constructor', {
 
 /**
  *  Simple method to build a ticket request.
- *  
+ *
  *  @param {mixed} requested the ID of the service the ticket is requesting access to.
  *  @returns {Object} A properly formatted ticket.
  */
@@ -75,7 +75,7 @@ ServerosConsumer.prototype.buildRequestTicket = function(requested) {
 
 /**
  *  Request an Authorization ticket from the Authentication Master
- *  
+ *
  *  @param {mixed} requested the ID of the service the ticket is requesting access to.
  *  @param {Serveros.ServerosConsumer~requestTicketCallback} callback A callback for the eventual Ticket.
  */
@@ -125,11 +125,11 @@ ServerosConsumer.prototype.requestTicket = function(requested, callback) {
                     that.idecryptAndVerify(body, function(err, decrypted) {
                         if (err)
                             callback(err);
-                        else if(decrypted.requesterNonce != authRequest.nonce) 
+                        else if(decrypted.requesterNonce != authRequest.nonce)
                             callback(new AuthError.NonceError());
                         else if(that.isStale(decrypted.ts))
                             callback(new AuthError.StaleError());
-                        else 
+                        else
                             /**
                              *  Callback for requestTicket
                              *  @callback Serveros.ServerosConsumer~requestTicketCallback
@@ -146,7 +146,7 @@ ServerosConsumer.prototype.requestTicket = function(requested, callback) {
 
 /**
  *  Authorize a ticket to its intended Service.
- *  
+ *
  *  @param {String} serviceLocation A URL for authorizing to the service.
  *  @param {Object} ticket A ticket retrieved from {@link Serveros.ServerosConsumer#requestTicket requestTicket}
  *  @param {Serveros.ServerosConsumer~authorizeCallback} callback A callback for the eventual credentials.
@@ -225,7 +225,7 @@ ServerosConsumer.prototype.authorize = function(serviceLocation, ticket, callbac
 /**
  *  A simple concatentation of {@link Serveros.ServerosConsumer#requestTicket requestTicket} and
  *      {@link Serveros.ServersosConsumer#authorize authorize}.
- *  
+ *
  *  @param {mixed} serviceID the ID of the service the ticket is requesting access to.
  *  @param {String} serviceLocation A URL for authorizing to the service.
  *  @param {Serveros.ServerosConsumer~authorizeCallback} callback A callback for the eventual credentials.
@@ -255,7 +255,7 @@ ServerosConsumer.prototype.getCredentials = function(serviceId, serviceLocation,
 /**
  *  A small wrapper around {@link Serveros.Encrypter.encrypt Lib.encrypt} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Object} message A JSON message to be encrypted.
  *  @param {Serveros.Encrypter~encryptCallback} callback A callback for the eventual error or ciphertext.
  */
@@ -273,7 +273,7 @@ ServerosConsumer.prototype.iencrypt = function(message, callback) {
 /**
  *  A small wrapper around {@link Serveros.Encrypter.sign Lib.sign} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Buffer|String} data The data to be signed.
  *  @param {Serveros.Encrypter~signCallback} callback A callback for the eventual error or signature
  */
@@ -284,7 +284,7 @@ ServerosConsumer.prototype.isign = function(encrypted, callback) {
 /**
  *  A small wrapper around {@link Serveros.Encrypter.encryptAndSign Lib.encryptAndSign} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Object} message A JSON message to be encrypted.
  *  @param {Serveros.Encrypter~encryptAndSignCallback} callback A callback for the eventual error or encrypted/signed message.
  */
@@ -308,7 +308,7 @@ ServerosConsumer.prototype.iencryptAndSign = function(message, callback) {
 /**
  *  A small wrapper around {@link Serveros.Encrypter.decrypt Lib.decrypt} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Buffer|String} message The output of a previous call to Encrypt
  *  @param {Serveros.Encrypter~decryptCallback} callback A callback for the eventual error or plaintext
  */
@@ -319,7 +319,7 @@ ServerosConsumer.prototype.idecrypt = function(message, callback) {
 /**
  *  A small wrapper around {@link Serveros.Encrypter.verify Lib.verify} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Buffer|String} data The previously signed data.
  *  @param {String} algorithm The Hash algorithm to use whilst calculating the HMAC
  *  @param {Buffer|String} signature The previously generated Signature - as a buffer or base64
@@ -333,7 +333,7 @@ ServerosConsumer.prototype.iverify = function(encrypted, algorithm, signature, c
 /**
  *  A small wrapper around {@link Serveros.Encrypter.decryptAndVerify Lib.decryptAndVerify} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Object} The over the wire message - shaped like output from {@link Serveros.Encrypter.encryptAndSign encryptAndSign}
  *  @param {Serveros.Encrypter~decryptAndVerifyCallback} callback A callback for the eventual error or plaintext
  */
@@ -344,7 +344,7 @@ ServerosConsumer.prototype.idecryptAndVerify = function(message, callback) {
 /**
  *  A small wrapper around {@link Serveros.Encrypter.encipher Lib.encipher} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Object} message A JSON message to be enciphered.
  *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
  *  @param {Buffer|String} algorithm The cipher algorithm to use while deciphering.
@@ -364,7 +364,7 @@ ServerosConsumer.prototype.iencipher = function(message, key, iv, algorithm, cal
 /**
  *  A simple wrapper around {@link Serveros.Encrypter.decipher Lib.decipher} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Buffer|String} ciphertext Either a buffer with cipher bytes, or a base64 encoded string.
  *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
  *  @param {Buffer|String} algorithm The cipher algorithm to use while deciphering.

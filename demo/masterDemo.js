@@ -1,9 +1,13 @@
-var fs = require('fs') 
+var fs = require('fs')
     , publicKeys = {
-        "Application A": fs.readFileSync('./demo/keys/serverA.pem') + ''
+        "Application A": [
+            fs.readFileSync('./demo/keys/serverA2.pem') + ''
+            , fs.readFileSync('./demo/keys/serverA.pem') + ''
+        ]
         , "Application B": fs.readFileSync('./demo/keys/serverB.pem') + ''
     }
-    , myPrivateKey = fs.readFileSync('./demo/keys/master') 
+    , myPrivateKey = fs.readFileSync('./demo/keys/master')
+    , notMyPrivateKey = fs.readFileSync('./demo/keys/serverA')
     , keyFunction = function(id, requester, callback) {
         process.nextTick(function() {
             callback({
@@ -21,7 +25,7 @@ var fs = require('fs')
 
 var express = require('express')
     , master = new ServerosMaster({
-        privateKey: myPrivateKey
+        privateKey: [notMyPrivateKey, myPrivateKey]
         , publicKeyFunction: keyFunction
         , hashes: ['sha1', 'sha256', 'sha512']
         , ciphers: ['aes128', 'aes256', 'aes192']
@@ -32,6 +36,6 @@ master.addAuthenticationEndpoint(application);
 var server = application.listen(3500, 'localhost', function () {
     var host = server.address().address;
     var port = server.address().port;
-  
+
     console.log('Example app listening at http://%s:%s', host, port);
 });

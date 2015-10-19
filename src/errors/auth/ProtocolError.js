@@ -3,7 +3,7 @@ var ServerosError = require('../ServerosError')
 
 /**
  *  An erroneous response from a server.
- *  
+ *
  *  @class Error.AuthError.ProtocolError
  *  @extends ServerosError
  *  @inheritdoc
@@ -25,7 +25,7 @@ Object.defineProperty(ProtocolError.prototype, 'constructor', {
 
 /**
  *  Return the information about the erroneous response.
- *  
+ *
  *  @return {Object}
  *  @override
  */

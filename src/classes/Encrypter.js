@@ -2,10 +2,12 @@ var crypto = require('crypto'),
     constants = require('constants'),
     cipherData = require('../cipherdata'),
     CryptoError = require('../errors/crypto'),
+    WrappedError = require('../errors/WrappedError'),
+    ServerosError = require('../errors/ServerosError'),
 
     /**
      *  The Delimiter for RSA Encryptions
-     *  
+     *
      *  @memberOf Serveros.Encrypter
      *  @default
      *  @private
@@ -14,7 +16,7 @@ var crypto = require('crypto'),
 
     /**
      *  Tolerance for out of synch clocks
-     *  
+     *
      *  @memberOf Serveros.Encrypter
      *  @default
      *  @private
@@ -23,20 +25,20 @@ var crypto = require('crypto'),
 
     /**
      *  A Regular expression to help weed out padding characters.
-     *  
+     *
      *  PKCS Padding requires you to pad the last N bytes with bytes of value N.  As such, 00-1F
      *  Will work for up to 256 bit block sizes.  Since they're all control characters, I don't
      *  expect to see them in the actual plaintext.  I'm not bothering to verify that the values
      *  match the size.
-     *  
+     *
      *  ISO 7816 Padding uses the 80 byte followed by 00 bytes till the end.
-     *  
+     *
      *  Zero Padding is contraindicated by Good Encryption standards, but PHP has to foul up
      *  everything.
-     *  
+     *
      *  ANSI X.923 Bytes are 00 bytes till the end, but the last byte is 01-1F, indicating the number
      *  of padding bytes needed.  It is not being validated.
-     *  
+     *
      *  @memberOf Serveros.Encrypter
      *  @default
      */
@@ -50,11 +52,11 @@ var hashes = crypto.getHashes();
 
 /**
  *  Switch an array's contents to hash keys to make inArray checks cheaper.
- *  
+ *
  *  @param {array} array Any array
  *  @return {Object} An object whose keys consist of the items in the array,
  *    and the values assosciated with those keys are boolean true.
- *  
+ *
  *  @memberOf Serveros.Encrypter
  *  @static
  */
@@ -78,7 +80,7 @@ Encrypter.prototype = {
     /**
      *  Generate a nonce.  Currently, Nonces are essentially 53bits of cryptographically insecure
      *  randomness, but their integer nature is kind of immaterial.
-     *  
+     *
      *  @returns {Number} A positive Integer, for now.  Really, this could return any data, in any size.
      */
     nonce: function() {
@@ -87,7 +89,7 @@ Encrypter.prototype = {
 
     /**
      *  Generate a one-time use key for encrypting messages via RSA.
-     *  
+     *
      *  @param {Serveros.Encrypter~randomCallback} callback Will be called with 32 random bytes or an error.
      */
     oneTimeKey: function(callback) {
@@ -96,7 +98,7 @@ Encrypter.prototype = {
                 if (callback) {
                     if (err)
                         callback(new CryptoError.RandomBytesError(err));
-                    else 
+                    else
                         /**
                          *  Callback for functions generating random bytes.
                          *  @callback Serveros.Encrypter~randomCallback
@@ -117,7 +119,7 @@ Encrypter.prototype = {
     /**
      *  Get Single use credentials for a specific cipher.  Gets a key of the right size, and an
      *  initial vector of size equal to the block size for a known ciphers.
-     *  
+     *
      *  @param {String} cipherName The name of the intended Cipher.
      *  @param {Serveros.Encrypter~credentialsCallback} callback a callback for the eventual credentials.
      */
@@ -142,7 +144,7 @@ Encrypter.prototype = {
                                     callback(new CryptoError.RandomBytesError(err));
                                 return;
                             } else {
-                                if (callback) 
+                                if (callback)
 
                                     /**
                                      *  Callback for getOneTimeCredentials
@@ -173,7 +175,7 @@ Encrypter.prototype = {
 
     /**
      *  Generate a short use key for consumer/provider authentication.
-     *  
+     *
      *  @param {Serveros.Encrypter~randomCallback} callback Will be called with 64 random bytes or an error.
      */
     shortUseKey: function(callback) {
@@ -182,7 +184,7 @@ Encrypter.prototype = {
                 if (callback) {
                     if (err)
                         callback(new CryptoError.RandomBytesError(err));
-                    else 
+                    else
                         callback(null, key);
                 }
             });
@@ -196,7 +198,7 @@ Encrypter.prototype = {
 
     /**
      *  Decipher a symmetrically encrypted ciphertext.
-     *  
+     *
      *  @param {Buffer|String} ciphertext Either a buffer with cipher bytes, or a base64 encoded string.
      *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
      *  @param {Buffer|String} IV Either a buffer with IV bytes, or a base64 encoded string.
@@ -249,7 +251,7 @@ Encrypter.prototype = {
 
     /**
      *  Decipher a symmetrically encrypted ciphertext.
-     *  
+     *
      *  @param {Buffer|String} message Either a buffer with plaintext bytes, or a utf8 encoded string.
      *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
      *  @param {Buffer|String} initialVector Either a buffer with IV bytes, or a base64 encoded string.
@@ -299,16 +301,18 @@ Encrypter.prototype = {
     },
 
     /**
-     *  Encipher the data in question (via JSON Encoded String) with a one-time key/IV, then 
-     *  encrypt the key/IV with the provided RSA key.  The two ciphertexts are then base64 encoded 
+     *  Encipher the data in question (via JSON Encoded String) with a one-time key/IV, then
+     *  encrypt the key/IV with the provided RSA key.  The two ciphertexts are then base64 encoded
      *  and joined with a delimiter to provide the Encrypted Text.
-     *  
+     *
      *  @param {Buffer|String} rsaKey A PEM Encoded RSA Key (Public Key)
      *  @param {Buffer|String} message Either a buffer with plaintext bytes, or a utf8 encoded string.
      *  @param {String} algorithm The cipher algorithm to use while enciphering.
      *  @param {Serveros.Encrypter~encryptCallback} callback A callback for the eventual error or ciphertext.
      */
     encrypt: function(rsaKey, data, algorithm, callback) {
+        if (rsaKey instanceof Array)
+            rsaKey = rsaKey[0];
         try {
             var that = this;
             this.getOneTimeCredentials(algorithm, function(err, credentials) {
@@ -359,13 +363,45 @@ Encrypter.prototype = {
     },
 
     /**
+     *  Attempt to decrypt that data with each key in the array - returning the first success.  This
+     *  is essential for key rotation.  If none are successful, the error from the last one is the
+     *  returned.
+     *
+     *  @param {Array} rsaKeyArray An array of PEM Encoded RSA Keys (Private Keys)
+     *  @param {Buffer|String} data The output of a previous call to Encrypt
+     *  @param {Serveros.Encrypter~decryptCallback} callback A callback for the eventual error or plaintext
+     */
+    decryptArray: function (rsaKeyArray, data, callback) {
+        if (!(rsaKeyArray instanceof Array)) {
+            this.decrypt(rsaKeyArray, data, callback);
+            return;
+        }
+        var i = -1
+            , that = this
+            , cb = function(err, plaintext) {
+                if (!err || ((err instanceof ServerosError ) && (Math.floor(err.statusCode / 100 ) == 4 )) || i >= rsaKeyArray.length-1) {
+                    if (plaintext)
+                        plaintext.chosen = i;
+                    callback(err, plaintext);
+                } else {
+                    that.decrypt(rsaKeyArray[++i], data, cb);
+                }
+            };
+        cb(true);
+    },
+
+    /**
      *  Decrypt the output of the encrypt function.
-     *  
+     *
      *  @param {Buffer|String} rsaKey A PEM Encoded RSA Key (Private Key)
      *  @param {Buffer|String} data The output of a previous call to Encrypt
      *  @param {Serveros.Encrypter~decryptCallback} callback A callback for the eventual error or plaintext
      */
     decrypt: function(rsaKey, data, callback) {
+        if (rsaKey instanceof Array) {
+            this.decryptArray(rsaKey, data, callback);
+            return;
+        }
         try {
             var pieces = data.split(DELIMITER)
                 , message = pieces[0]
@@ -401,13 +437,15 @@ Encrypter.prototype = {
 
     /**
      *  Sign some Data.
-     *  
+     *
      *  @param {Buffer|String} rsaKey A PEM Encoded RSA Key (Private Key)
      *  @param {Buffer|String} data The data to be signed.
      *  @param {String} algorithm The Hash algorithm to use whilst calculating the HMAC
      *  @param {Serveros.Encrypter~signCallback} callback A callback for the eventual error or signature
      */
     sign: function(rsaKey, data, algorithm, callback) {
+        if (rsaKey instanceof Array)
+            rsaKey = rsaKey[0];
         try {
             if (this.hashPrefs.indexOf(algorithm) == -1) {
                 if (callback) {
@@ -444,8 +482,39 @@ Encrypter.prototype = {
     },
 
     /**
+     *  Attempt to verify the signature with each key in the array - returning the first success.  This
+     *  is essential for key rotation.  If none are successful, the error from the last one is the
+     *  returned.
+     *
+     *  @param {Array} rsaKeyArray An array of PEM Encoded RSA Keys (Public Keys)
+     *  @param {Buffer|String} data The previously signed data.
+     *  @param {String} algorithm The Hash algorithm to use whilst calculating the HMAC
+     *  @param {Buffer|String} signature The previously generated Signature - as a buffer or base64
+     *      encoded String.
+     *  @param {Serveros.Encrypter~verifyCallback} callback A callback for the eventual error or verification Status
+     */
+    verifyArray: function (rsaKeyArray, data, algorithm, signature, callback) {
+        if (!(rsaKeyArray instanceof Array)) {
+            this.verify(rsaKeyArray, data, algorithm, signature, callback);
+            return;
+        }
+        var i = -1
+            , that = this
+            , cb = function(err, verified) {
+                if (!err || ((err instanceof ServerosError ) && (Math.floor(err.statusCode / 100 ) == 4 )) || i >= rsaKeyArray.length-1) {
+                    if (verified)
+                        verified.chosen = i;
+                    callback(err, verified);
+                } else {
+                    that.verify(rsaKeyArray[++i], data, algorithm, signature, cb);
+                }
+            };
+        cb(true);
+    },
+
+    /**
      *  Verify a Signature.
-     *  
+     *
      *  @param {Buffer|String} rsaKey A PEM Encoded RSA Key (Public Key)
      *  @param {Buffer|String} data The previously signed data.
      *  @param {String} algorithm The Hash algorithm to use whilst calculating the HMAC
@@ -454,6 +523,10 @@ Encrypter.prototype = {
      *  @param {Serveros.Encrypter~verifyCallback} callback A callback for the eventual error or verification Status
      */
     verify: function(rsaKey, data, algorithm, signature, callback) {
+        if (rsaKey instanceof Array) {
+            this.verifyArray(rsaKey, data, algorithm, signature, callback);
+            return;
+        }
         try {
             if (this.hashPrefs.indexOf(algorithm) == -1) {
                 if (callback) {
@@ -480,7 +553,9 @@ Encrypter.prototype = {
                     if(callback) {
                         if (!verified)
                             callback(new CryptoError.VerificationError());
-                        else callback(null, verified);
+                        else callback(null, {
+                            verified: true
+                        });
                     }
                 } catch (err) {
                     if (callback)
@@ -497,17 +572,17 @@ Encrypter.prototype = {
 
     /**
      *  Check if a timstamp is stale - gathered here for repitition's sake.
-     *  
+     *
      *  @param {Number} - A numeric timestamp in milliseconds since the epoch.
      *  @returns {Boolean} - True if the timestamp in question is too far out of synch with the server's clock.
      */
     isStale: function(ts) {
         return !ts || Math.abs(ts - new Date().getTime()) > STALE_REQUEST_TOLERANCE
     },
-    
+
     /**
      *  Encrypt and Sign - a simple concatentation of {@link Serveros.Encrypter.encrypt encrypt} and {@link Serveros.Encrypter.sign sign}.
-     *  
+     *
      *  @param {Buffer|String} encryptKey A PEM Encoded RSA Key (Public Key)
      *  @param {Buffer|String} signKey A PEM Encoded RSA Key (Private Key)
      *  @param {Buffer|String} message Either a buffer with plaintext bytes, or a utf8 encoded string.
@@ -543,7 +618,7 @@ Encrypter.prototype = {
 
     /**
      *  Decrypt and Verify - a simple concatentation of {@link Serveros.Encrypter.decrypt decrypt} and {@link Serveros.Encrypter.verify verify}
-     *  
+     *
      *  @param {Buffer|String} encryptKey A PEM Encoded RSA Key (Public Key)
      *  @param {Buffer|String} signKey A PEM Encoded RSA Key (Private Key)
      *  @param {Object} The over the wire message - shaped like output from {@link Serveros.Encrypter.encryptAndSign encryptAndSign}
@@ -557,7 +632,7 @@ Encrypter.prototype = {
                 return;
             }
             that.verify(verifyKey, message.message, plaintext.hash, message.signature, function(err, verified) {
-                if (err) 
+                if (err)
                     callback(err);
                 else if (!verified)
                     callback(new CryptoError.VerificationError());

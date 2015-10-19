@@ -3,7 +3,7 @@ var ServerosError = require('../ServerosError')
 
 /**
  *  Error taking an ID and turning it into Application information.
- *  
+ *
  *  @class Error.MasterError.ApplicationResolutionError
  *  @extends ServerosError
  *  @inheritdoc
@@ -23,14 +23,14 @@ Object.defineProperty(ApplicationResolutionError.prototype, 'constructor', {
 
 /**
  *  The Type of application we failed to resolve.
- *  
+ *
  *  @default
  */
 ApplicationResolutionError.prototype.applicationType = "No Application Type Provided.";
 
 /**
  *  Return the type of application which failed resoltion.
- *  
+ *
  *  @return {Object}
  */
 ApplicationResolutionError.prototype.additionalInformation = function() {

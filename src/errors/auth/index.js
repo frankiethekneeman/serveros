@@ -1,6 +1,6 @@
 /**
  *  A Bundle Module for things that might go wrong whilst Authing.
- *  
+ *
  *  @module AuthError
  */
 module.exports = exports = {

@@ -3,7 +3,7 @@ var ServerosError = require('../ServerosError')
 
 /**
  *  Unmatched Nonces Preventing Authentication.
- *  
+ *
  *  @class Error.AuthError.NonceError
  *  @extends ServerosError
  *  @inheritdoc

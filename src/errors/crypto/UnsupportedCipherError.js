@@ -3,7 +3,7 @@ var UnsupportedError = require('../UnsupportedError')
 
 /**
  *  A cipher that cannot be supported was encountered.
- *  
+ *
  *  @class Error.CryptoError.UnsupportedCipherError
  *  @extends UnsupportedError
  *  @inheritdoc
