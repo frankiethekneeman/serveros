@@ -4,7 +4,7 @@
  */
 /**
  *  The base error for all Errors.
- *  
+ *
  *  @class Error.ServerosError
  *  @param {String} [message] a simple message describing the Error.
  *  @param {Integer} [statusCode] A status code for use.
@@ -24,14 +24,14 @@ Object.defineProperty(ServerosError.prototype, 'constructor', {
 
 /**
  *  The HTTP Status code to be used if this Error crops up in an HTTP endpoint.
- *  
+ *
  *  @default
  */
 ServerosError.prototype.statusCode = 500;
 
 /**
  *  A message that might explain what's going on.
- *  
+ *
  *  @default
  */
 ServerosError.prototype.message = "Malformed Error."
@@ -39,7 +39,7 @@ ServerosError.prototype.message = "Malformed Error."
 /**
  *  A function that returns an object to be added to JSON HTTP responses with information
  *  about the Error in question.
- *  
+ *
  *  @return {Object}
  */
 ServerosError.prototype.prepResponseBody = function() {
@@ -55,7 +55,7 @@ ServerosError.prototype.prepResponseBody = function() {
 
 /**
  *  This should be overridden by subclasses to provide more information.
- *  
+ *
  *  @return {Object}
  */
 ServerosError.prototype.additionalInformation = function() {

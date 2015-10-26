@@ -3,11 +3,11 @@ var WrappedError = require('../WrappedError')
 
 /**
  *  The PublicKeyFunction threw an error.
- *  
+ *
  *  @class Error.MasterError.PublicKeyFunctionError
  *  @extends WrappedError
  *  @inheritdoc
- *  
+ *
  *  @param {Error} err The error thrown.
  */
 function PublicKeyFunctionError(err) {

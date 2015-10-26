@@ -2,10 +2,10 @@ var ServerosServiceProvider = require('../src/classes/ServerosServiceProvider')
     , HawkAuthenticator = require('../src/classes/HawkAuthenticator')
     , Hawk = require('hawk')
     , express = require('express')
-    , fs = require('fs') 
+    , fs = require('fs')
     , bodyParser = require('body-parser')
     , masterPublicKey = fs.readFileSync('./demo/keys/master.pem') + ''
-    , myPrivateKey = fs.readFileSync('./demo/keys/serverB') 
+    , myPrivateKey = fs.readFileSync('./demo/keys/serverB')
     , application = express()
     , provider = new ServerosServiceProvider({
             id: 'Application B'
@@ -29,6 +29,6 @@ application.get('/test', function(req, res, next) {
 var server = application.listen(3501, 'localhost', function () {
     var host = server.address().address;
     var port = server.address().port;
-  
+
     console.log('Example app listening at http://%s:%s', host, port);
 });

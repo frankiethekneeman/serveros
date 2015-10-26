@@ -3,7 +3,7 @@ var ServerosError = require('./ServerosError')
 
 /**
  *  An unsupported entity was encountered.
- *  
+ *
  *  @class Error.UnsupportedError
  *  @extends ServerosError
  *  @inheritdoc
@@ -39,7 +39,7 @@ UnsupportedError.prototype.supported = [];
 
 /**
  *  Return the requested/supported entries in a readable format.
- *  
+ *
  *  @return {Object}
  *  @override
  */

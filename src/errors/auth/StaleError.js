@@ -3,7 +3,7 @@ var ServerosError = require('../ServerosError')
 
 /**
  *  A stale Authentication request.
- *  
+ *
  *  @class Error.AuthError.StaleError
  *  @extends ServerosError
  *  @inheritdoc
@@ -21,7 +21,7 @@ Object.defineProperty(StaleError.prototype, 'constructor', {
 
 /**
  *  Return the Server clock in Milliseconds since the Epoch.
- *  
+ *
  *  @returns {Object}
  *  @override
  */

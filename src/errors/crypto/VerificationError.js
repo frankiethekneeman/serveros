@@ -3,7 +3,7 @@ var ServerosError = require('../ServerosError')
 
 /**
  *  Error for an unverified Message.
- *  
+ *
  *  @class Error.CryptoError.VerificationError
  *  @extends ServerosError
  *  @inheritdoc

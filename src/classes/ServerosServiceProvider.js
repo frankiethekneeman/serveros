@@ -8,9 +8,9 @@ var crypto = require('crypto')
  *  from a Service Consumer on the Network.
  *  @extends Serveros.Encrypter
  *  @class Serveros.ServerosServiceProvider
- *  
+ *
  *  @param {Object} options
- *  @param {mixed} options.id Anything that can be (a) JSON encoded and (b) used by the 
+ *  @param {mixed} options.id Anything that can be (a) JSON encoded and (b) used by the
  *      Authentication Master to uniquely identify the Service Provider
  *  @param {string} options.privateKey The Private Key for the Service Provider, as a PEM encoded string. The matching
  *      Public Key should be registered with the Authentication Master separately
@@ -36,7 +36,7 @@ function ServerosServiceProvider(options) {
         });
     }
     this.master = {
-        publicKey: options.master.publicKey 
+        publicKey: options.master.publicKey
     };
     //Chose an initial Hash and Cipher.
     this.chosenHash = this.hashPrefs[0];
@@ -54,7 +54,7 @@ Object.defineProperty(ServerosServiceProvider.prototype, 'constructor', {
 
 /**
  *  Validate an incoming Greeting.
- *  
+ *
  *  @param {Object} greeting The over the wire Greeting from a Service Consumer.
  *  @param {Serveros.ServerosServiceProvider~validateCallback} A callback for the eventual credentials.
  */
@@ -80,17 +80,17 @@ ServerosServiceProvider.prototype.validate = function(greeting, callback) {
                     return;
                 }
                 var id = JSON.parse(plaintext);
-                if(id.serverNonce !== ticket.serverNonce) 
+                if(id.serverNonce !== ticket.serverNonce)
                     callback(new AuthError.NonceError());
                 else if (id.requesterNonce !== ticket.requesterNonce)
                     callback(new AuthError.NonceError());
                 else if (that.isStale(ticket.ts))
                     callback(new AuthError.StaleError());
-                else 
+                else
                     /**
                      *  @callback Serveros.ServerosServiceProvider~validateCallback
                      *  @param {Error.ServerosError} err Any error which prevents validation.
-                     *  @param {object} credentials Successfully verified credentials - which should 
+                     *  @param {object} credentials Successfully verified credentials - which should
                      *      be responded to in the affirmative in the future,
                      *      until they're no longer valid.
                      */
@@ -134,10 +134,10 @@ ServerosServiceProvider.prototype.expressValidator = function(onSuccessfulGreeti
                 try {
 
                     /**
-                     *  A callback for 
+                     *  A callback for
                      *  @callback Serveros.ServerosServiceProvider~validatorCallback
                      *  @param {object} credentials Successfully verified credentials - which should
-                     *      be responded to in the affirmative in the future, until they're no 
+                     *      be responded to in the affirmative in the future, until they're no
                      *      longer valid.
                      */
                     if (onSuccessfulGreeting) onSuccessfulGreeting(authorized);
@@ -155,7 +155,7 @@ ServerosServiceProvider.prototype.expressValidator = function(onSuccessfulGreeti
                         }
                         res.json({message:ciphertext});
                     });
-                    
+
                 } catch (err) {
                     res.status(500).json({'err': err});
                 }
@@ -167,7 +167,7 @@ ServerosServiceProvider.prototype.expressValidator = function(onSuccessfulGreeti
 /**
  *  A small wrapper around {@link Serveros.Encrypter.encrypt Lib.encrypt} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Object} message A JSON message to be encrypted.
  *  @param {Serveros.Encrypter~encryptCallback} callback A callback for the eventual error or ciphertext.
  */
@@ -178,7 +178,7 @@ ServerosServiceProvider.prototype.iencrypt = function(message, callback) {
 /**
  *  A small wrapper around {@link Serveros.Encrypter.sign Lib.sign} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Buffer|String} data The data to be signed.
  *  @param {Serveros.Encrypter~signCallback} callback A callback for the eventual error or signature
  */
@@ -189,7 +189,7 @@ ServerosServiceProvider.prototype.isign = function(encrypted, callback) {
 /**
  *  A small wrapper around {@link Serveros.Encrypter.encryptAndSign Lib.encryptAndSign} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Object} message A JSON message to be encrypted.
  *  @param {Serveros.Encrypter~encryptAndSignCallback} callback A callback for the eventual error or encrypted/signed message.
  */
@@ -213,7 +213,7 @@ ServerosServiceProvider.prototype.iencryptAndSign = function(message, callback) 
 /**
  *  A small wrapper around {@link Serveros.Encrypter.decrypt Lib.decrypt} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Buffer|String} message The output of a previous call to Encrypt
  *  @param {Serveros.Encrypter~decryptCallback} callback A callback for the eventual error or plaintext
  */
@@ -224,7 +224,7 @@ ServerosServiceProvider.prototype.idecrypt = function(message, callback) {
 /**
  *  A small wrapper around {@link Serveros.Encrypter.verify Lib.verify} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Buffer|String} data The previously signed data.
  *  @param {String} algorithm The Hash algorithm to use whilst calculating the HMAC
  *  @param {Buffer|String} signature The previously generated Signature - as a buffer or base64
@@ -233,12 +233,12 @@ ServerosServiceProvider.prototype.idecrypt = function(message, callback) {
  */
 ServerosServiceProvider.prototype.iverify = function(encrypted, algorithm, signature, callback) {
     this.verify(this.master.publicKey, encrypted,  algorithm, signature, callback);
-}; 
+};
 
 /**
  *  A small wrapper around {@link Serveros.Encrypter.decryptAndVerify Lib.decryptAndVerify} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Object} The over the wire message - shaped like output from {@link Serveros.Encrypter.encryptAndSign encryptAndSign}
  *  @param {Serveros.Encrypter~decryptAndVerifyCallback} callback A callback for the eventual error or plaintext
  */
@@ -249,7 +249,7 @@ ServerosServiceProvider.prototype.idecryptAndVerify = function(message, callback
 /**
  *  A small wrapper around {@link Serveros.Encrypter.encipher Lib.encipher} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Object} message A JSON message to be enciphered.
  *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
  *  @param {Buffer|String} algorithm The cipher algorithm to use while deciphering.
@@ -269,7 +269,7 @@ ServerosServiceProvider.prototype.iencipher = function(message, key, iv, algorit
 /**
  *  A simple wrapper around {@link Serveros.Encrypter.decipher Lib.decipher} which provides the correct
  *  local arguments.
- *  
+ *
  *  @param {Buffer|String} ciphertext Either a buffer with cipher bytes, or a base64 encoded string.
  *  @param {Buffer|String} key Either a buffer with key bytes, or a base64 encoded string.
  *  @param {Buffer|String} algorithm The cipher algorithm to use while deciphering.

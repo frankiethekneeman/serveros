@@ -3,7 +3,7 @@ var WrappedError = require('../WrappedError')
 
 /**
  *  Signals an Error occured while making an HTTP request.
- *  
+ *
  *  @class Error.AuthError.HTTPError
  *  @extends WrappedError
  *  @inheritdoc

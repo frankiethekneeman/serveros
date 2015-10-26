@@ -1,7 +1,7 @@
 /**
  *  A Bundle Module for things that might go wrong while Enciphering, Deciphering,
  *  encrypting, decrypting, signing or verifying data.
- *  
+ *
  *  @module CryptoError
  */
 module.exports = exports = {

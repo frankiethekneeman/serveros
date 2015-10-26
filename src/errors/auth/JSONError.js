@@ -3,7 +3,7 @@ var WrappedError = require('../WrappedError')
 
 /**
  *  An error while JSON encoding/decoding.
- *  
+ *
  *  @class Error.AuthError.JSONError
  *  @extends WrappedError
  *  @inheritdoc

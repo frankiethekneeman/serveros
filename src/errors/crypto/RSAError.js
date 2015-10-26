@@ -3,7 +3,7 @@ var WrappedError = require('../WrappedError')
 
 /**
  *  An Error during RSA Encryption/Decryption.
- *  
+ *
  *  @class Error.CryptoError.RSAError
  *  @extends WrappedError
  *  @inheritdoc

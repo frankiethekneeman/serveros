@@ -1,9 +1,9 @@
 var ServerosConsumer = require('../src/classes/ServerosConsumer')
-    , fs = require('fs') 
+    , fs = require('fs')
     , request = require('request')
     , Hawk = require('hawk')
     , masterPublicKey = fs.readFileSync('./demo/keys/master.pem') + ''
-    , myPrivateKey = fs.readFileSync('./demo/keys/serverA') 
+    , myPrivateKey = fs.readFileSync('./demo/keys/serverA')
     , masterServerLocation
     , consumer = new ServerosConsumer({
             id: 'Application A'

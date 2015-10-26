@@ -1,6 +1,6 @@
 /**
  *  A Module of Errors Specific to the Authentication Master.
- *  
+ *
  *  @module MasterError
  */
 module.exports = exports = {

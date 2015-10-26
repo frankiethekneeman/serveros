@@ -3,7 +3,7 @@ var WrappedError = require('../WrappedError')
 
 /**
  *  An error generating Random Bytes.
- *  
+ *
  *  @class Error.CryptoError.RandomBytesError
  *  @extends WrappedError
  *  @inheritdoc
