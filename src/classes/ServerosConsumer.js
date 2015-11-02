@@ -212,6 +212,7 @@ ServerosConsumer.prototype.authorize = function(serviceLocation, ticket, callbac
                                 , id: ticket.id
                                 , key: ticket.secret
                                 , algorithm: ticket.hash
+                                , expires: ticket.expires
                             });
                         }
                     });

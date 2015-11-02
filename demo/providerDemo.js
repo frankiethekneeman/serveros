@@ -20,11 +20,15 @@ var ServerosServiceProvider = require('../src/classes/ServerosServiceProvider')
     , authenticator = new HawkAuthenticator();
     ;
 
-application.use('/authenticate', bodyParser.json());
+application.use(bodyParser.json());
 application.post('/authenticate', provider.expressValidator(authenticator.credentialsAccepter()));
 application.use(authenticator.expressAuthorizer());
 application.get('/test', function(req, res, next) {
     res.json({'Authed As': req.authedAs, 'Auth Data': req.authData});
+});
+application.post('/test', function(req, res, next) {
+    res.send();
+    console.log({'Authed As': req.authedAs, 'Auth Data': req.authData, 'Payload': req.body});
 });
 var server = application.listen(3501, 'localhost', function () {
     var host = server.address().address;

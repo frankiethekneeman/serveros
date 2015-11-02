@@ -81,8 +81,13 @@ HawkAuthenticator.prototype = {
             Hawk.server.authenticate(req, function(id, callback) {
                 that.storage.retrieve(id, function(credentials) {
                     if (!credentials) {
-                      callback("No Credentials Found.");
-                      return;
+                        callback("No Credentials Found.");
+                        return;
+                    }
+                    if (Date.now() < credentials.expires) {
+                        that.storage.purge(id, function() {
+                            if (callback) callback("Credentials Expired");
+                        });
                     }
                     var hawkCredentials = {
                         key: credentials.secret
