@@ -84,10 +84,11 @@ HawkAuthenticator.prototype = {
                         callback("No Credentials Found.");
                         return;
                     }
-                    if (Date.now() < credentials.expires) {
+                    if (Date.now() > credentials.expires) {
                         that.storage.purge(id, function() {
                             if (callback) callback("Credentials Expired");
                         });
+                        return;
                     }
                     var hawkCredentials = {
                         key: credentials.secret
