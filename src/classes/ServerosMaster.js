@@ -84,6 +84,7 @@ ServerosMaster.prototype.authenticate = function(authenticationMessage, callback
             that.publicKeyFunction(decrypted.requester, decrypted.requested, function(requester) {
                 if (!requester) {
                     callback(new MasterError.ApplicationResolutionError("requester"));
+                    return;
                 }
                 that.iverify(requester.publicKey
                         , authenticationMessage.message
