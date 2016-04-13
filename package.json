@@ -1,6 +1,6 @@
 {
   "name": "serveros",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "Auth for networks of applications.",
   "repository": {
     "type": "git",

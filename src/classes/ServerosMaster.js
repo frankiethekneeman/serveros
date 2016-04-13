@@ -73,17 +73,19 @@ ServerosMaster.prototype.authenticate = function(authenticationMessage, callback
          *  A callback for the {@link SeverosMaster.publicKeyFunction}
          *  @callback Serveros.ServerosMaster~publicKeyResponse
          *
+         *  @param {object} error
          *  @param {object} data App Data.
          *  @param {mixed} data.id The id of the application.
+         *  @param {mixed} data.publicKey The public key, or public keys of the requested application.
          *  @param {string[]} [data.hashes={@link Serveros.Encrypter~hashes}] A list of acceptable hashes, in order of descending preference
          *  @param {string[]} [data.ciphers={@link Serveros.Encrypter~ciphers}] A list of acceptable Ciphers, in order of descending preference
          *  @param {integer} data.keysLast The amount of time, in milliseconds, this application wants to honor keys.
          *  @param {mixed} data.authData Any additional data about the application that should be passed on to the service.
          */
         try {
-            that.publicKeyFunction(decrypted.requester, decrypted.requested, function(requester) {
-                if (!requester) {
-                    callback(new MasterError.ApplicationResolutionError("requester"));
+            that.publicKeyFunction(decrypted.requester, decrypted.requested, function(err, requester) {
+                if (err || !requester) {
+                    callback(new MasterError.ApplicationResolutionError("requester", err));
                     return;
                 }
                 that.iverify(requester.publicKey
@@ -209,7 +211,11 @@ ServerosMaster.prototype.getTicket = function(request, requester, privateKeyNum,
     var that = this
         , privateKey = this.privateKey instanceof Array ? this.privateKey[privateKeyNum] : this.privateKey
         ;
-    this.publicKeyFunction(request.requested, null, function(requested) {
+    this.publicKeyFunction(request.requested, null, function(err, requested) {
+        if (err || !requested) {
+            callback(new MasterError.ApplicationResolutionError("requested", err));
+            return;
+        }
         that.buildTicket(request, requested, requester, function(err, ticket) {
             if (err) {
                 callback(err);
